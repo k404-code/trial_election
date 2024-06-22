@@ -2,6 +2,7 @@
 
 import vote_chain as vc
 
+
 def main():
     vote_chain = [vc.create_genesis_block()]
     previous_block = vote_chain[0]
@@ -14,5 +15,14 @@ def main():
 
     vc.print_votes(vote_chain)
 
-if __name__ == "__main__":
-    main()
+
+def get_candidates():
+    candidates = []
+    num_candidates = int(input("Enter the number of candidates: "))
+
+    for i in range(num_candidates):
+        candidate_id = input("Enter the candidate ID: ")
+        candidate_name = input("Enter the candidate name: ")
+        candidates.append((candidate_id, candidate_name))
+
+    return candidates
