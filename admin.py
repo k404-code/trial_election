@@ -27,7 +27,7 @@ def remove_candidate():
     with open("candidates.csv", "r") as file:
         reader = csv.DictReader(file)
         for row in reader:
-            if row["Name"] != name:
+            if row["name"] != name:
                 candidates.append(row)
     with open("candidates.csv", "w", newline="") as file:
         writer = csv.DictWriter(file, fieldnames=["Name", "Forum"])
@@ -40,7 +40,7 @@ def view_candidates():
     with open("candidates.csv", "r") as file:
         reader = csv.DictReader(file)
         for row in reader:
-            print(f"Name: {row['Name']}, Forum: {row['Forum']}")
+            print(f"Name: {row['name']}, Forum: {row['forum']}")
 
 # Main function
 def main():

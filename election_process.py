@@ -26,3 +26,6 @@ def get_candidates():
         candidates.append((candidate_id, candidate_name))
 
     return candidates
+
+if __name__ == "__main__":
+    main()
