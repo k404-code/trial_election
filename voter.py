@@ -38,4 +38,4 @@ def get_voter_id():
     cast_vote()
 
 if __name__ == "__main__":
-    main():
+    main()
