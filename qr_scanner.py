@@ -63,7 +63,6 @@ def get_studentid():
 
     # Print the stored QR code data
     if qr_code_data:
-        print(f"Student ID: {qr_code_data}")
         return qr_code_data
 
 if __name__ == '__main__':

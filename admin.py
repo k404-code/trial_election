@@ -1,4 +1,5 @@
 import csv
+from tabulate import tabulate
 
 # Set the demo password
 demo_password = "password123"
@@ -36,11 +37,20 @@ def remove_candidate():
     print("Candidate removed successfully!")
 
 # Function to view all candidates
-def view_candidates():
+def print_candidates():
     with open("candidates.csv", "r") as file:
         reader = csv.DictReader(file)
-        for row in reader:
-            print(f"Name: {row['name']}, Forum: {row['forum']}")
+        candidates = list(reader)
+
+    # Prepare data for tabulate
+    table = []
+    for slno, candidate in enumerate(candidates, start=1):
+        table.append([slno, candidate["name"], candidate["forum"]])
+
+    # Print the candidates in tabular format
+    headers = ["Sl. No", "Candidate", "Forum"]
+    print(tabulate(table, headers, tablefmt="grid"))
+    return candidates
 
 # Main function
 def main():
@@ -57,7 +67,7 @@ def main():
             elif choice == "2":
                 remove_candidate()
             elif choice == "3":
-                view_candidates()
+                print_candidates()
             elif choice == "4":
                 break
             else:
