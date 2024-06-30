@@ -1,3 +1,5 @@
+#voter.py
+
 import qr_scanner
 import csv
 from tabulate import tabulate
