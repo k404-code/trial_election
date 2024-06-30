@@ -1,7 +1,5 @@
-#admin.py
-
-import csv
 from tabulate import tabulate
+from database import Database
 
 # Set the demo password
 demo_password = "password123"
@@ -15,47 +13,42 @@ def authenticate():
         return False
 
 # Function to add a candidate
-def add_candidate():
+def add_candidate(db):
     name = input("Enter the candidate's name: ")
     forum = input("Enter the candidate's forum: ")
-    with open("candidates.csv", "a", newline="") as file:
-        writer = csv.writer(file)
-        writer.writerow([name, forum])
-    print("Candidate added successfully!")
+    candidate_id = db.insert_candidate(name, forum)
+    print(f"Candidate added successfully with ID {candidate_id}!")
 
 # Function to remove a candidate
-def remove_candidate():
+def remove_candidate(db):
     name = input("Enter the candidate's name: ")
-    candidates = []
-    with open("candidates.csv", "r") as file:
-        reader = csv.DictReader(file)
-        for row in reader:
-            if row["name"] != name:
-                candidates.append(row)
-    with open("candidates.csv", "w", newline="") as file:
-        writer = csv.DictWriter(file, fieldnames=["Name", "Forum"])
-        writer.writeheader()
-        writer.writerows(candidates)
+    db.remove_candidate(name)
     print("Candidate removed successfully!")
 
 # Function to view all candidates
-def print_candidates():
-    with open("candidates.csv", "r") as file:
-        reader = csv.DictReader(file)
-        candidates = list(reader)
-
+def print_candidates(db):
+    candidates = db.get_all_candidates()
     # Prepare data for tabulate
     table = []
-    for slno, candidate in enumerate(candidates, start=1):
-        table.append([slno, candidate["name"], candidate["forum"]])
+    for candidate in candidates:
+        table.append([candidate[0], candidate[1], candidate[2]])
 
     # Print the candidates in tabular format
-    headers = ["Sl. No", "Candidate", "Forum"]
+    headers = ["ID", "Candidate", "Forum"]
     print(tabulate(table, headers, tablefmt="grid"))
     return candidates
 
 # Main function
 def main():
+    db = Database(
+        dbname="postgres",
+        user="postgres",
+        password="1234",
+        host="localhost",
+        port="5432"
+    )
+    db.create_tables()  # Ensure the tables are created if they don't exist
+
     if authenticate():
         while True:
             print("Menu:")
@@ -65,20 +58,20 @@ def main():
             print("4. Exit")
             choice = input("Enter your choice: ")
             if choice == "1":
-                add_candidate()
+                add_candidate(db)
             elif choice == "2":
-                remove_candidate()
+                remove_candidate(db)
             elif choice == "3":
-                print_candidates()
+                print_candidates(db)
             elif choice == "4":
                 break
             else:
                 print("Invalid choice. Please try again.")
-                
     else:
         print("Authentication failed.")
     print()
-    
-# Run the main function
+
+    db.close()  # Close the database connection
+
 if __name__ == "__main__":
     main()

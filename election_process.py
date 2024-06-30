@@ -4,20 +4,20 @@ from database import Database
 
 def main(voted_candidate):
     db = Database(
-        dbname="your_db_name",
-        user="your_db_user",
-        password="your_db_password",
-        host="your_db_host",
-        port="your_db_port"
+        dbname="postgres",
+        user="postgres",
+        password="1234",
+        host="localhost",
+        port="5432"
     )
     
-    db.create_table()
+    db.create_tables()  # Ensure the table is created if it doesn't exist
     vote_chain = [vc.create_genesis_block()]
     previous_block = vote_chain[0]
 
-    previous_block = vc.add_vote(vote_chain, previous_block, voted_candidate[0], voted_candidate[1], db)
+    previous_block = vc.add_vote(vote_chain, previous_block, voted_candidate[0], voted_candidate[1], db)  # Pass db to add_vote
     vc.print_votes(vote_chain)
-    db.close()
+    db.close()  # Close the database connection
 
 if __name__ == "__main__":
     main()

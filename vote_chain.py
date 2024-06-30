@@ -1,7 +1,5 @@
-# vote_chain.py
 import hashlib as hasher
 import datetime as date
-from database import Database
 
 class VoteChain:
     def __init__(self, index, timestamp, student_id, candidate_id, previous_hash):
@@ -22,7 +20,7 @@ class VoteChain:
         return sha.hexdigest()
 
 def create_genesis_block():
-    return VoteChain(0, date.datetime.now(), "0", "0", "0")
+    return VoteChain(0, date.datetime.now(), "0", 0, "0")
 
 def next_block(last_block, student_id, candidate_id):
     this_index = last_block.index + 1
@@ -54,10 +52,7 @@ def print_votes(votechain):
             print(f"Student {vote.student_id} voted for Candidate {vote.candidate_id}")
 
 def add_vote(vote_chain, previous_block, voter_id, candidate_id, db):
-    block_to_add = next_block(previous_block, voter_id, candidate_id)
-    vote_chain.append(block_to_add)
-    print(f"Vote added: Student {voter_id} voted for Candidate {candidate_id}")
-    
-    # Insert the new vote into the database
-    db.insert_vote(block_to_add)
-    return block_to_add
+    new_vote = next_block(previous_block, voter_id, candidate_id)
+    vote_chain.append(new_vote)
+    db.insert_vote(new_vote)
+    return new_vote
