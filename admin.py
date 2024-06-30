@@ -1,5 +1,7 @@
+# admin.py
+
 from tabulate import tabulate
-from database import Database
+from db_instance import get_instance
 
 # Set the demo password
 demo_password = "password123"
@@ -13,20 +15,23 @@ def authenticate():
         return False
 
 # Function to add a candidate
-def add_candidate(db):
+def add_candidate():
+    db = get_db()
     name = input("Enter the candidate's name: ")
     forum = input("Enter the candidate's forum: ")
     candidate_id = db.insert_candidate(name, forum)
     print(f"Candidate added successfully with ID {candidate_id}!")
 
 # Function to remove a candidate
-def remove_candidate(db):
+def remove_candidate():
+    db = get_db()
     name = input("Enter the candidate's name: ")
     db.remove_candidate(name)
     print("Candidate removed successfully!")
 
 # Function to view all candidates
-def print_candidates(db):
+def print_candidates():
+    db = get_db()
     candidates = db.get_all_candidates()
     # Prepare data for tabulate
     table = []
@@ -40,15 +45,6 @@ def print_candidates(db):
 
 # Main function
 def main():
-    db = Database(
-        dbname="postgres",
-        user="postgres",
-        password="1234",
-        host="localhost",
-        port="5432"
-    )
-    db.create_tables()  # Ensure the tables are created if they don't exist
-
     if authenticate():
         while True:
             print("Menu:")
@@ -58,11 +54,11 @@ def main():
             print("4. Exit")
             choice = input("Enter your choice: ")
             if choice == "1":
-                add_candidate(db)
+                add_candidate()
             elif choice == "2":
-                remove_candidate(db)
+                remove_candidate()
             elif choice == "3":
-                print_candidates(db)
+                print_candidates()
             elif choice == "4":
                 break
             else:
@@ -70,8 +66,6 @@ def main():
     else:
         print("Authentication failed.")
     print()
-
-    db.close()  # Close the database connection
 
 if __name__ == "__main__":
     main()

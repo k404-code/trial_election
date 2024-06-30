@@ -1,4 +1,4 @@
-#qr_scanner.py
+# qr_scanner.py
 
 import cv2
 from pyzbar.pyzbar import decode
@@ -63,9 +63,8 @@ def get_studentid():
     cap.release()
     cv2.destroyAllWindows()
 
-    # Print the stored QR code data
-    if qr_code_data:
-        return qr_code_data
+    print(qr_code_data)
+    return qr_code_data
 
 if __name__ == '__main__':
     main()

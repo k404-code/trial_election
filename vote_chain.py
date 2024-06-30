@@ -1,58 +1,51 @@
-import hashlib as hasher
-import datetime as date
+# vote_chain.py
 
-class VoteChain:
+import hashlib
+import datetime as date
+from db_instance import get_instance
+
+class VoteBlock:
     def __init__(self, index, timestamp, student_id, candidate_id, previous_hash):
         self.index = index
         self.timestamp = timestamp
         self.student_id = student_id
         self.candidate_id = candidate_id
         self.previous_hash = previous_hash
-        self.hash = self.hash_vote()
+        self.hash = self.calculate_hash()
 
-    def hash_vote(self):
-        sha = hasher.sha256()
-        sha.update(str(self.index).encode('utf-8') +
-                   str(self.timestamp).encode('utf-8') +
-                   str(self.student_id).encode('utf-8') +
-                   str(self.candidate_id).encode('utf-8') +
-                   str(self.previous_hash).encode('utf-8'))
-        return sha.hexdigest()
+    def calculate_hash(self):
+        vote_data = f'{self.index}{self.timestamp}{self.student_id}{self.candidate_id}{self.previous_hash}'
+        return hashlib.sha256(vote_data.encode('utf-8')).hexdigest()
 
 def create_genesis_block():
-    return VoteChain(0, date.datetime.now(), "0", 0, "0")
+    return VoteBlock(0, date.datetime.now(), "0", 0, "0")
 
-def next_block(last_block, student_id, candidate_id):
-    this_index = last_block.index + 1
-    this_timestamp = date.datetime.now()
-    this_hash = last_block.hash
-    return VoteChain(this_index, this_timestamp, student_id, candidate_id, this_hash)
+def add_vote(vote_chain, previous_block, student_id, candidate_id, db):
+    index = previous_block.index + 1
+    timestamp = date.datetime.now()
+    previous_hash = previous_block.hash
+    vote = VoteBlock(index, timestamp, student_id, candidate_id, previous_hash)
+    vote_chain.append(vote)
+    db.insert_vote(vote)
+    return vote
 
-def validate_blockchain(votechain):
-    for i in range(1, len(votechain)):
-        current_vote = votechain[i]
-        previous_vote = votechain[i - 1]
+def print_votes(vote_chain):
+    for vote in vote_chain:
+        print(f'Index: {vote.index}')
+        print(f'Timestamp: {vote.timestamp}')
+        print(f'Student ID: {vote.student_id}')
+        print(f'Candidate ID: {vote.candidate_id}')
+        print(f'Previous Hash: {vote.previous_hash}')
+        print(f'Hash: {vote.hash}')
+        print('-------------')
 
-        if current_vote.hash != current_vote.hash_vote():
-            print(f"Vote {current_vote.student_id} has been tampered with.")
-            return False
-        
-        if current_vote.previous_hash != previous_vote.hash:
-            print(f"Vote {current_vote.student_id} is not linked to the previous votes correctly.")
-            return False
+def load_vote_chain(db):
+    vote_chain = []
+    existing_votes = db.get_all_votes()
+    for vote in existing_votes:
+        vote_chain.append(VoteBlock(vote[0], vote[1], vote[2], vote[3], vote[4]))
 
-    print("Valid blockchain")
-    return True
-
-def print_votes(votechain):
-    if not validate_blockchain(votechain):
-        return
-    for vote in votechain:
-        if vote.index != 0:  # Skip the genesis block
-            print(f"Student {vote.student_id} voted for Candidate {vote.candidate_id}")
-
-def add_vote(vote_chain, previous_block, voter_id, candidate_id, db):
-    new_vote = next_block(previous_block, voter_id, candidate_id)
-    vote_chain.append(new_vote)
-    db.insert_vote(new_vote)
-    return new_vote
+    if not vote_chain:  # If no existing votes, create genesis block
+        vote_chain.append(create_genesis_block())
+    
+    return vote_chain

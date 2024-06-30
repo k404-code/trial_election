@@ -1,7 +1,8 @@
-#main.py
+# main.py
 
 import sys
-import admin, voter
+import admin
+import voter
 
 try:
     args = sys.argv[1].removeprefix("-")

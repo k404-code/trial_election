@@ -1,3 +1,5 @@
+# database.py
+
 import psycopg2
 
 class Database:
@@ -68,6 +70,13 @@ class Database:
         candidates = cursor.fetchall()
         cursor.close()
         return candidates
+
+    def get_all_votes(self):
+        cursor = self.conn.cursor()
+        cursor.execute("SELECT * FROM votes ORDER BY index ASC")
+        votes = cursor.fetchall()
+        cursor.close()
+        return votes
 
     def close(self):
         self.conn.close()

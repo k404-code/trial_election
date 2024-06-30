@@ -1,27 +1,26 @@
+# voter.py
 import qr_scanner
 import election_process as ep
+import vote_chain as vc
 import keyboard
-from database import Database
+from db_instance import get_instance
 from tabulate import tabulate
 
 def main():
     start_voting()
 
 def start_voting():
-    db = Database(
-        dbname="postgres",
-        user="postgres",
-        password="1234",
-        host="localhost",
-        port="5432"
-    )
+    db = get_instance()
     db.create_tables()  # Ensure the tables are created if they don't exist
+
+    # Load the vote chain once
+    vote_chain = vc.load_vote_chain(db)
 
     while True:
         voter_ID = get_voter_id()
         auth_to_vote()
         voted_candidate = cast_vote(db)
-        ep.main([voter_ID, voted_candidate])
+        ep.main(vote_chain, [voter_ID, voted_candidate])  # Pass vote_chain to main
 
         print("Press 'q' to exit")
         if keyboard.read_key() == 'q':
