@@ -1,0 +1,12 @@
+# Database Connectivity
+psycopg2-binary==2.10.3
+
+# QR Code Scanner
+opencv-python==4.5.4.60
+pyzbar==0.1.8
+
+# Data Visualization
+tabulate==0.8.11
+
+# Other Dependencies
+keyboard==0.13.5
