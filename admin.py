@@ -5,6 +5,7 @@ from db_instance import get_instance
 
 # Set the demo password
 demo_password = "password123"
+db = get_instance()
 
 # Function to authenticate the user
 def authenticate():
@@ -16,7 +17,6 @@ def authenticate():
 
 # Function to add a candidate
 def add_candidate():
-    db = get_db()
     name = input("Enter the candidate's name: ")
     forum = input("Enter the candidate's forum: ")
     candidate_id = db.insert_candidate(name, forum)
@@ -24,14 +24,12 @@ def add_candidate():
 
 # Function to remove a candidate
 def remove_candidate():
-    db = get_db()
     name = input("Enter the candidate's name: ")
     db.remove_candidate(name)
     print("Candidate removed successfully!")
 
 # Function to view all candidates
 def print_candidates():
-    db = get_db()
     candidates = db.get_all_candidates()
     # Prepare data for tabulate
     table = []
