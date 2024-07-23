@@ -8,9 +8,9 @@ def get_instance():
     global _instance
     if _instance is None:
         _instance = Database(
-            dbname="postgres",
+            dbname="test",
             user="postgres",
-            password="1234",
+            password="goat1825",
             host="localhost",
             port="5432"
         )
